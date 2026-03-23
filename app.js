@@ -14,7 +14,7 @@ const errorMiddleware = require('./middlewares/error.middleware');
 
 const app = express();
 
-app.use(cors({origin: 'http://localhost:5173', credentials: true}));
+app.use(cors({origin: process.env.APP_URI, credentials: true}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -34,7 +34,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Le serveur tourne sur http://localhost:${PORT}`);
+  console.log(`Le serveur tourne !`);
 });
 
 module.exports = app;
