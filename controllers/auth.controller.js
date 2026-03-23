@@ -47,9 +47,11 @@ exports.login = async (req, res) => {
     );
 
     res.cookie('jwt', token, {
-      httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
-      secure: true
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      partitioned: true
     });
 
     res.status(200).json({ 
@@ -63,6 +65,12 @@ exports.login = async (req, res) => {
 };
 
 exports.logout = (req, res) => {
-  res.cookie('jwt', '', { maxAge: 1 });
+  res.cookie('jwt', '', { 
+    maxAge: 1,
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    partitioned: true
+  });
   res.status(200).json({ message: "Déconnecté" });
 };
