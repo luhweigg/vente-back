@@ -35,7 +35,9 @@ exports.getAllItems = async (req, res) => {
     const items = await Item.find(filter).populate('sellerId', 'username').sort({ createdAt: -1 });
     res.status(200).json(items);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    if (err.message !== "Accès refusé. Veuillez vous connecter.") {
+      res.status(500).json({ error: error.message });
+    }
   }
 };
 

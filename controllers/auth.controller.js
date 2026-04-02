@@ -64,6 +64,37 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.requireAuth = (req, res, next) => {
+  const token = req.cookies.jwt;
+
+  if (!token) {
+    return res.status(401).json({ message: "Accès refusé. Veuillez vous connecter." });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedToken) => {
+    if (err) {
+      return res.status(403).json({ message: "Token invalide ou expiré." });
+    } else {
+      req.userId = decodedToken.userId; 
+      next();
+    }
+  });
+};
+
+exports.checkSession = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur introuvable." });
+    }
+    res.status(200).json({ 
+      user: { id: user._id, username: user.username, money: user.money } 
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 exports.logout = (req, res) => {
   res.cookie('jwt', '', { 
     maxAge: 1,
