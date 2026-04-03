@@ -45,7 +45,11 @@ exports.createItem = async (req, res) => {
   try {
     const { title, description, price } = req.body;
 
-    const imageUrl = req.file ? req.file.path : 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80';
+    let imageUrl = 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80';
+    
+    if (req.file) {
+      imageUrl = req.file.secure_url || req.file.url || req.file.path;
+    }
 
     const newItem = new Item({
       title,
