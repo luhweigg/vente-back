@@ -35,7 +35,7 @@ exports.getAllItems = async (req, res) => {
     const items = await Item.find(filter).populate('sellerId', 'username').sort({ createdAt: -1 });
     res.status(200).json(items);
   } catch (error) {
-    if (err.message !== "Accès refusé. Veuillez vous connecter.") {
+    if (error.message !== "Accès refusé. Veuillez vous connecter.") {
       res.status(500).json({ error: error.message });
     }
   }
@@ -45,7 +45,8 @@ exports.createItem = async (req, res) => {
   try {
     const { title, description, price } = req.body;
 
-    const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80';
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol;
+    const imageUrl = req.file ? `${protocol}://${req.get('host')}/uploads/${req.file.filename}` : 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=300&q=80';
 
     const newItem = new Item({
       title,
