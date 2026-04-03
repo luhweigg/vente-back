@@ -1,24 +1,18 @@
 const multer = require('multer');
-const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('cloudinary').v2;
 
-const MIME_TYPES = {
-  'image/jpg': 'jpg',
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp'
-};
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, callback) => {
-    if (!fs.existsSync('uploads')) {
-      fs.mkdirSync('uploads');
-    }
-    callback(null, 'uploads');
-  },
-  filename: (req, file, callback) => {
-    const name = file.originalname.split(' ').join('_').split('.')[0]; 
-    const extension = MIME_TYPES[file.mimetype];
-    callback(null, name + '_' + Date.now() + '.' + extension);
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'vente_app',
+    allowedFormats: ['jpg', 'png', 'jpeg', 'webp']
   }
 });
 
