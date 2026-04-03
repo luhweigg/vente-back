@@ -1,6 +1,6 @@
 const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const cloudinary = require('cloudinary').v2;
+const CloudinaryStorageModule = require('multer-storage-cloudinary');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -8,12 +8,21 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
+let storage;
+if (CloudinaryStorageModule.CloudinaryStorage) {
+  storage = new CloudinaryStorageModule.CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'vente_app',
+      allowedFormats: ['jpg', 'png', 'jpeg', 'webp']
+    }
+  });
+} else {
+  storage = CloudinaryStorageModule({
+    cloudinary: cloudinary,
     folder: 'vente_app',
     allowedFormats: ['jpg', 'png', 'jpeg', 'webp']
-  }
-});
+  });
+}
 
 module.exports = multer({ storage: storage }).single('image');
